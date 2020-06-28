@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import tcod
 
-from actions import EscapeAction, MovementAction
+from engine import Engine
+from entity import Entity
 from input_handlers import EventHandler
 
 
@@ -10,16 +11,33 @@ def main() -> None:
     screen_width = 80
     screen_height = 50
     # player vars
-    player_x = int(screen_width / 2)
-    player_y = int(screen_height / 2)
+    player = Entity(
+        int(screen_width / 2),
+        int(screen_height / 2),
+        "@",
+        (255, 255, 255)
+    )
+    npc = Entity(
+        int(screen_width / 2 - 5),
+        int(screen_height / 2 - 5),
+        "@",
+        (255, 0, 0)
+    )
+    entities = { npc, player }
+
+    # init event handler
+    event_handler = EventHandler()
+    # init engine
+    engine = Engine(
+        entities=entities,
+        event_handler=event_handler,
+        player=player
+    )
 
     # load the tileset
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
-
-    # init event handler
-    event_handler = EventHandler()
 
     # set up the context
     with tcod.context.new_terminal(
@@ -34,28 +52,12 @@ def main() -> None:
 
         # game loop
         while True:
-            # await input from player
-            for event in tcod.event.wait():
-                action = event_handler.dispatch(event)
+            # handle input from player
+            events = tcod.event.wait()
+            engine.handle_events(events)
 
-                if action is None:
-                    continue
-
-                if isinstance(action, MovementAction):
-                    player_x += action.dx
-                    player_y += action.dy
-
-                elif isinstance(action, EscapeAction):
-                    raise SystemExit()
-
-            # clear the console before we print to it
-            root_console.clear()
-
-            # print our player
-            root_console.print(x=player_x, y=player_y, string="@")
-
-            # present everything we've printed to the screen
-            context.present(root_console)
+            # print everything to screen
+            engine.render(console=root_console, context=context)
 
 
 if __name__ == "__main__":
