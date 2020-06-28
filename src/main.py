@@ -4,6 +4,7 @@ import tcod
 from engine import Engine
 from entity import Entity
 from input_handlers import EventHandler
+import colours
 
 
 def main() -> None:
@@ -15,13 +16,13 @@ def main() -> None:
         int(screen_width / 2),
         int(screen_height / 2),
         "@",
-        (255, 255, 255)
+        colours.WHITE
     )
     npc = Entity(
         int(screen_width / 2 - 5),
         int(screen_height / 2 - 5),
         "@",
-        (255, 0, 0)
+        colours.RED
     )
     entities = { npc, player }
 
