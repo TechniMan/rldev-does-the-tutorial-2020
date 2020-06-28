@@ -28,15 +28,7 @@ class Engine:
             if action is None:
                 continue
 
-            if isinstance(action, MovementAction):
-                # only move the player if the space they're trying to walk to is valid
-                to_x = self.player.x + action.dx
-                to_y = self.player.y + action.dy
-                if self.game_map.in_bounds(to_x, to_y) and self.game_map.tiles["walkable"][to_x, to_y]:
-                    self.player.move(dx=action.dx, dy=action.dy)
-            
-            elif isinstance(action, EscapeAction):
-                raise SystemExit()
+            action.perform(self, self.player)
 
     def render(self, console: Console, context: Context) -> None:
         # render the map to the console
