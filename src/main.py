@@ -3,6 +3,7 @@ import tcod
 
 from engine import Engine
 from entity import Entity
+from game_map import GameMap
 from input_handlers import EventHandler
 import colours
 
@@ -11,6 +12,8 @@ def main() -> None:
     # general vars
     screen_width = 80
     screen_height = 50
+    map_width = 80
+    map_height = 45
     # player vars
     player = Entity(
         int(screen_width / 2),
@@ -26,12 +29,15 @@ def main() -> None:
     )
     entities = { npc, player }
 
+    game_map = GameMap(map_width, map_height)
+
     # init event handler
     event_handler = EventHandler()
     # init engine
     engine = Engine(
         entities=entities,
         event_handler=event_handler,
+        game_map=game_map,
         player=player
     )
 
