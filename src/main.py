@@ -3,8 +3,8 @@ import tcod
 
 from engine import Engine
 from entity import Entity
-from game_map import GameMap
 from input_handlers import EventHandler
+from procgen import generate_dungeon
 import colours
 
 
@@ -14,6 +14,9 @@ def main() -> None:
     screen_height = 50
     map_width = 80
     map_height = 45
+    room_min_size = 5
+    room_max_size = 10
+    max_rooms = 30
     # player vars
     player = Entity(
         int(screen_width / 2),
@@ -29,7 +32,14 @@ def main() -> None:
     )
     entities = { npc, player }
 
-    game_map = GameMap(map_width, map_height)
+    game_map = generate_dungeon(
+        max_rooms,
+        room_min_size,
+        room_max_size,
+        map_width,
+        map_height,
+        player
+    )
 
     # init event handler
     event_handler = EventHandler()
