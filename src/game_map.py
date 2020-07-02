@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class GameMap:
     def __init__(self, width: int, height: int, entities: Iterable[Entity] = ()):
         self.width, self.height = width, height
-        self.entities = entities
+        self.entities = set(entities)
         self.tiles = numpy.full((width, height), fill_value=tile_types.wall, order="F")
         self.visible = numpy.full((width, height), fill_value=False, order="F")
         self.explored = numpy.full((width, height), False, order="F")

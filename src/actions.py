@@ -39,6 +39,9 @@ class MovementAction(Action):
         # if entity is trying to walk into an unwalkable tile (e.g. a wall), don't move
         if not engine.game_map.tiles["walkable"][dest_x, dest_y]:
             return
+        # if entity is trying to walk into a movement-blocking entity, don't move
+        if any(entity.x == dest_x and entity.y == dest_y for entity in engine.game_map.entities):
+            return
 
         # finally, move the entity
         entity.move(self.dx, self.dy)

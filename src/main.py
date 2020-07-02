@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
+import copy
+
 import tcod
 
+import colours
 from engine import Engine
 from entity import Entity
+import entity_factories
 from input_handlers import EventHandler
 from procgen import generate_dungeon
-import colours
 
 
 def main() -> None:
@@ -17,20 +20,19 @@ def main() -> None:
     room_min_size = 5
     room_max_size = 10
     max_rooms = 30
+    enemies_per_room = (0, 2)
     # player vars
-    player = Entity(
-        int(screen_width / 2),
-        int(screen_height / 2),
-        "@",
-        colours.WHITE
-    )
+    player = copy.deepcopy(entity_factories.player)
 
+    # in future, have a data type to hold all these
+    #  for ease of generating different dungeons
     game_map = generate_dungeon(
         max_rooms,
         room_min_size,
         room_max_size,
         map_width,
         map_height,
+        enemies_per_room,
         player
     )
 
