@@ -21,7 +21,8 @@ tile_dt = numpy.dtype(
     [
         ("walkable", numpy.bool),    # True if this tile can be walked on by entities
         ("transparent", numpy.bool), # True if this entity doesn't block line of sight
-        ("dark", graphic_dt)         # Graphics for when this tile is not in FOV
+        ("unlit", graphic_dt),        # Graphic data for when this tile is not in FOV
+        ("lit", graphic_dt)        # Graphic data for when this tile is in FOV
     ]
 )
 
@@ -31,15 +32,25 @@ def new_tile(
     *, # Enforce the use of keywords, so that parameter order doesn't matter
     walkable: int,
     transparent: int,
-    dark: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]]
+    unlit: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]],
+    lit: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]]
 ) -> numpy.ndarray:
     """ Helper function for defining individual tile types """
-    return numpy.array((walkable, transparent, dark), dtype=tile_dt)
+    return numpy.array((walkable, transparent, unlit, lit), dtype=tile_dt)
 
+
+# FOG: default, for unseen tiles
+FOG = numpy.array((ord(" "), colours.WHITE, colours.BLACK), dtype=graphic_dt)
 
 floor = new_tile(
-    walkable=True, transparent=True, dark=(ord(" "), colours.WHITE, colours.BLUE)
+    walkable=True,
+    transparent=True,
+    unlit=(ord(" "), colours.WHITE, colours.unlit_BLUE),
+    lit=(ord(" "), colours.WHITE, colours.YELLOW)
 )
 wall = new_tile(
-    walkable=False, transparent=False, dark=(ord(" "), colours.WHITE, colours.DARK_BLUE)
+    walkable=False,
+    transparent=False,
+    unlit=(ord(" "), colours.WHITE, colours.DARK_GREY),
+    lit=(ord(" "), colours.WHITE, colours.ORANGE)
 )
