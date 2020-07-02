@@ -17,18 +17,22 @@ class Action:
         raise NotImplementedError()
 
 
+class ActionWithDirection(Action):
+    def __init__(self, dx: int, dy: int):
+        super().__init__()
+        self.dx = dx
+        self.dy = dy
+
+    def perform(self, engine: Engine, entity: Entity) -> None:
+        raise NotImplementedError()
+
+
 class EscapeAction(Action):
     def perform(self, engine: Engine, entity: Entity) -> None:
         raise SystemExit()
 
 
-class MovementAction(Action):
-    def __init__(self, dx: int, dy: int):
-        super().__init__()
-
-        self.dx = dx
-        self.dy = dy
-
+class MovementAction(ActionWithDirection):
     def perform(self, engine: Engine, entity: Entity) -> None:
         dest_x = entity.x + self.dx
         dest_y = entity.y + self.dy
@@ -40,8 +44,32 @@ class MovementAction(Action):
         if not engine.game_map.tiles["walkable"][dest_x, dest_y]:
             return
         # if entity is trying to walk into a movement-blocking entity, don't move
-        if any(entity.x == dest_x and entity.y == dest_y for entity in engine.game_map.entities):
+        if engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             return
 
         # finally, move the entity
         entity.move(self.dx, self.dy)
+
+
+class MeléeAction(ActionWithDirection):
+    def perform(self, engine: Engine, entity: Entity) -> None:
+        dest_x = entity.x + self.dx
+        dest_y = entity.y + self.dy
+        target = engine.game_map.get_blocking_entity_at_location(dest_x, dest_y)
+        if not target:
+            return
+
+        print(f"You kick the {target.name}, much to its annoyance!")
+
+
+# Attempts to move into a space, otherwise deals with whatever's in the way
+class BumpAction(ActionWithDirection):
+    def perform(self, engine: Engine, entity: Entity) -> None:
+        dest_x = entity.x + self.dx
+        dest_y = entity.y + self.dy
+        # if would move into a blocking entity, attempt to attack it instead
+        if engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
+            return MeléeAction(self.dx, self.dy).perform(engine, entity)
+        # otherwise, move into the empty space
+        else:
+            return MovementAction(self.dx, self.dy).perform(engine, entity)
