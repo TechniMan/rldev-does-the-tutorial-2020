@@ -1,12 +1,18 @@
+from __future__ import annotations
+
+from typing import Iterable, TYPE_CHECKING
 import numpy # type: ignore
 from tcod.console import Console
 
 import tile_types
+if TYPE_CHECKING:
+    from entity import Entity
 
 
 class GameMap:
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, entities: Iterable[Entity] = ()):
         self.width, self.height = width, height
+        self.entities = entities
         self.tiles = numpy.full((width, height), fill_value=tile_types.wall, order="F")
         self.visible = numpy.full((width, height), fill_value=False, order="F")
         self.explored = numpy.full((width, height), False, order="F")
@@ -28,3 +34,9 @@ class GameMap:
             [self.tiles["lit"], self.tiles["unlit"]],
             tile_types.FOG
         )
+
+        # render entities to the console, on top of the map
+        for entity in self.entities:
+            # only print visible entities
+            if self.visible[entity.x, entity.y]:
+                console.print(entity.x, entity.y, entity.char, fg=entity.colour)

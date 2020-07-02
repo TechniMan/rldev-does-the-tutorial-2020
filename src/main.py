@@ -24,13 +24,6 @@ def main() -> None:
         "@",
         colours.WHITE
     )
-    npc = Entity(
-        int(screen_width / 2 - 5),
-        int(screen_height / 2 - 5),
-        "@",
-        colours.RED
-    )
-    entities = { npc, player }
 
     game_map = generate_dungeon(
         max_rooms,
@@ -45,7 +38,6 @@ def main() -> None:
     event_handler = EventHandler()
     # init engine
     engine = Engine(
-        entities=entities,
         event_handler=event_handler,
         game_map=game_map,
         player=player

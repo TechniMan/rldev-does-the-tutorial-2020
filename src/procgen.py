@@ -67,7 +67,7 @@ def generate_dungeon(
     player: Entity
 ) -> GameMap:
     """ Generate a new dungeon map """
-    dungeon = GameMap(map_width, map_height)
+    dungeon = GameMap(map_width, map_height, [player])
     rooms: List[RectangularRoom] = []
 
     for r in range(max_rooms):
