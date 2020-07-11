@@ -5,9 +5,7 @@ import tcod
 
 import colours
 from engine import Engine
-from entity import Entity
 import entity_factories
-from input_handlers import EventHandler
 from procgen import generate_dungeon
 
 
@@ -24,26 +22,23 @@ def main() -> None:
     # player vars
     player = copy.deepcopy(entity_factories.player)
 
+
+    # init engine
+    engine = Engine(
+        player=player
+    )
     # in future, have a data type to hold all these
     #  for ease of generating different dungeons
-    game_map = generate_dungeon(
+    engine.game_map = generate_dungeon(
         max_rooms,
         room_min_size,
         room_max_size,
         map_width,
         map_height,
         enemies_per_room,
-        player
+        engine
     )
-
-    # init event handler
-    event_handler = EventHandler()
-    # init engine
-    engine = Engine(
-        event_handler=event_handler,
-        game_map=game_map,
-        player=player
-    )
+    engine.update_fov()
 
     # load the tileset
     tileset = tcod.tileset.load_tilesheet(
@@ -64,11 +59,10 @@ def main() -> None:
         # game loop
         while True:
             # handle input from player
-            events = tcod.event.wait()
-            engine.handle_events(events)
+            engine.event_handler.handle_events()
 
             # print everything to screen
-            engine.render(console=root_console, context=context)
+            engine.render(root_console, context)
 
 
 if __name__ == "__main__":
