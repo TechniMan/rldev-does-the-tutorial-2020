@@ -1,10 +1,30 @@
 import colours
-from entity import Entity
+from components.ai import BaseAI, HostileEnemy
+from components.fighter import Fighter
+from entity import Actor
 
 
 # player
-player = Entity("Player", "@", colours.BLUE, blocks_movement=True)
+player = Actor(
+    name="Player",
+    char="@",
+    colour=colours.BLUE,
+    ai_cls=BaseAI,
+    fighter=Fighter(30, 2, 5)
+)
 
 # enemies
-orc = Entity("Orc", "o", colours.GREEN, blocks_movement=True)
-troll = Entity("Troll", "t", colours.DARK_GREEN, blocks_movement=True)
+orc = Actor(
+    name="Orc",
+    char="o",
+    colour=colours.GREEN,
+    ai_cls=HostileEnemy,
+    fighter=Fighter(10, 0, 3)
+)
+troll = Actor(
+    name="Troll",
+    char="t",
+    colour=colours.DARK_GREEN,
+    ai_cls=HostileEnemy,
+    fighter=Fighter(16, 1, 4)
+)

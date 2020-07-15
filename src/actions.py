@@ -3,18 +3,23 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
+    from entity import Actor, Entity
 
 
 class Action:
-    def __init__(self, entity: Entity) -> None:
+    def __init__(self, entity: Actor) -> None:
         super().__init__()
         self.entity = entity
-    
+
     @property
     def engine(self) -> Engine:
         """ Return the engine this action belongs to """
         return self.entity.game_map.engine
+
+    @property
+    def target_actor(self) -> Optional[Actor]:
+        """ return the actor at this action's destination """
+        return self.engine.game_map.get_actor_at_location(*self.dest_xy)
 
     def perform(self) -> None:
         """
@@ -27,7 +32,7 @@ class Action:
 
 
 class ActionWithDirection(Action):
-    def __init__(self, entity: Entity, dx: int, dy: int):
+    def __init__(self, entity: Actor, dx: int, dy: int):
         super().__init__(entity)
         self.dx = dx
         self.dy = dy
@@ -51,6 +56,11 @@ class EscapeAction(Action):
         raise SystemExit()
 
 
+class WaitAction(Action):
+    def perform(self):
+        pass
+
+
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:
         dest_x, dest_y = self.dest_xy
@@ -71,9 +81,17 @@ class MovementAction(ActionWithDirection):
 
 class MeléeAction(ActionWithDirection):
     def perform(self) -> None:
-        target = self.blocking_entity
+        target = self.target_actor
         if not target:
             return
+
+        damage = self.entity.fighter.power - target.fighter.defense
+        attack_description = f"{self.entity.name.capitalize()} attacks {target.name}"
+        if damage > 0:
+            print(f"{attack_description} for {damage} hit points")
+            target.fighter.hp -= damage
+        else:
+            print(f"{attack_description} but does no damage!")
 
         print(f"You kick the {target.name}, much to its annoyance!")
 
@@ -82,7 +100,7 @@ class MeléeAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     """ Attempts to move into a space, otherwise deals with whatever's in the way """
     def perform(self) -> None:
-        if self.blocking_entity:
+        if self.target_actor:
             return MeléeAction(self.entity, self.dx, self.dy).perform()
         # otherwise, move into the empty space
         else:
