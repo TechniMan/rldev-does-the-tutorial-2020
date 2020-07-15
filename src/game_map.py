@@ -58,7 +58,10 @@ class GameMap:
     def get_actor_at_location(self, x: int, y: int) -> Optional[Actor]:
         for actor in self.actors:
             if actor.x == x and actor.y == y:
-                return actor
+                # we've found the actor at this space; are they alive?
+                if actor.is_alive:
+                    return actor
+                return None
         return None
 
     def render(self, console: Console) -> None:

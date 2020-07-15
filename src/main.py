@@ -22,7 +22,6 @@ def main() -> None:
     # player vars
     player = copy.deepcopy(entity_factories.player)
 
-
     # init engine
     engine = Engine(
         player=player

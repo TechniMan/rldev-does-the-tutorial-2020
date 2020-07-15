@@ -82,6 +82,7 @@ class MovementAction(ActionWithDirection):
 class MeléeAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.target_actor
+        # if there isn't an actor there, then quit early
         if not target:
             return
 
@@ -92,8 +93,6 @@ class MeléeAction(ActionWithDirection):
             target.fighter.hp -= damage
         else:
             print(f"{attack_description} but does no damage!")
-
-        print(f"You kick the {target.name}, much to its annoyance!")
 
 
 # Attempts to move into a space, otherwise deals with whatever's in the way
