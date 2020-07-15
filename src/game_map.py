@@ -75,8 +75,10 @@ class GameMap:
             tile_types.FOG
         )
 
+        entities_sorted_for_rendering = sorted(self.entities, key=lambda x: x.render_order.value)
+
         # render entities to the console, on top of the map
-        for entity in self.entities:
+        for entity in entities_sorted_for_rendering:
             # only print visible entities
             if self.visible[entity.x, entity.y]:
                 console.print(entity.x, entity.y, entity.char, fg=entity.colour)

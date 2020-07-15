@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import colours
 from components.base_component import BaseComponent
+from render_order import RenderOrder
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -44,6 +45,7 @@ class Fighter(BaseComponent):
         else:
             death_message = f"{self.entity.name} has died"
 
+        self.entity.render_order = RenderOrder.CORPSE
         self.entity.char = "%"
         self.entity.colour = colours.RED
         self.entity.blocks_movement = False
