@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Optional, Tuple, TYPE_CHECKING
 
+import colours
+
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Actor, Entity
@@ -88,11 +90,22 @@ class MeléeAction(ActionWithDirection):
 
         damage = self.entity.fighter.power - target.fighter.defense
         attack_description = f"{self.entity.name.capitalize()} attacks {target.name}"
+        if self.entity is self.engine.player:
+            attack_colour = colours.PLAYER_ATTACK
+        else:
+            attack_colour = colours.ENEMY_ATTACK
+
         if damage > 0:
-            print(f"{attack_description} for {damage} hit points")
+            self.engine.message_log.add_message(
+                f"{attack_description} for {damage} hit points",
+                attack_colour
+            )
             target.fighter.hp -= damage
         else:
-            print(f"{attack_description} but does no damage!")
+            self.engine.message_log.add_message(
+                f"{attack_description}, but does no damage.",
+                attack_colour
+            )
 
 
 # Attempts to move into a space, otherwise deals with whatever's in the way

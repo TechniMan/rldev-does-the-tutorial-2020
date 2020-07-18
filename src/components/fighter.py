@@ -43,9 +43,11 @@ class Fighter(BaseComponent):
         # if we are the player
         if self.engine.player is self.entity:
             death_message = "You died!"
+            death_message_colour = colours.PLAYER_DIE
             self.engine.event_handler = GameOverEventHandler(self.engine)
         else:
             death_message = f"{self.entity.name} has died"
+            death_message_colour = colours.ENEMY_DIE
 
         self.entity.render_order = RenderOrder.CORPSE
         self.entity.char = "%"
@@ -54,4 +56,4 @@ class Fighter(BaseComponent):
         self.entity.ai = None
         self.entity.name = f"remains of {self.entity.name}"
 
-        print(death_message)
+        self.engine.message_log.add_message(death_message, death_message_colour)
