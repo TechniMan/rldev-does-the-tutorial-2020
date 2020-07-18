@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import copy
-
+import random
 import tcod
 
 import colours
@@ -39,15 +39,28 @@ def main() -> None:
     )
     engine.update_fov()
 
-    engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!",
-        colours.WELCOME_TEXT,
-        stack=False
-    )
-
+    # choose a random tileset until I can decide which I prefer
+    tilesets_available = [
+        ("Cheepicus-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        # ("dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD),
+        ("Guybrush-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        ("Kelora-16x16-diagonal.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        ("Moons-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        ("Msgothic.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        ("Tahin-16x16-rounded.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        ("Tigrex3d.png", 16, 16, tcod.tileset.CHARMAP_CP437)
+    ]
+    chosen_tileset = random.choice(tilesets_available)
     # load the tileset
     tileset = tcod.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        # "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        chosen_tileset[0], chosen_tileset[1], chosen_tileset[2], chosen_tileset[3]
+    )
+
+    engine.message_log.add_message(
+        f"Hello and welcome, adventurer, to yet another dungeon! Tileset: {chosen_tileset[0]}",
+        colours.WELCOME_TEXT,
+        stack=False
     )
 
     # set up the context

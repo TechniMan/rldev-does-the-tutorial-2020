@@ -45,12 +45,12 @@ FOG = numpy.array((ord(" "), colours.WHITE, colours.BLACK), dtype=graphic_dt)
 floor = new_tile(
     walkable=True,
     transparent=True,
-    unlit=(ord(" "), colours.WHITE, colours.DARK_BLUE),
-    lit=(ord(" "), colours.WHITE, colours.YELLOW)
+    unlit=(ord("."), colours.DARK_BLUE, colours.BLACK),
+    lit=(ord("."), colours.YELLOW, colours.BLACK)
 )
 wall = new_tile(
     walkable=False,
     transparent=False,
-    unlit=(ord(" "), colours.WHITE, colours.DARK_GREY),
-    lit=(ord(" "), colours.WHITE, colours.ORANGE)
+    unlit=(ord("#"), colours.DARK_GREY, colours.BLACK),
+    lit=(ord("#"), colours.ORANGE, colours.BLACK)
 )
