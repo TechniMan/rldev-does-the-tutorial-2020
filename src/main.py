@@ -77,10 +77,13 @@ def main() -> None:
         # game loop
         while True:
             # handle input from player
-            engine.event_handler.handle_events()
+            engine.event_handler.handle_events(context)
 
             # print everything to screen
-            engine.render(root_console, context)
+            root_console.clear()
+            engine.event_handler.on_render(root_console)
+            context.present(root_console)
+
 
 
 if __name__ == "__main__":
