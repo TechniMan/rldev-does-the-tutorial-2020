@@ -7,7 +7,7 @@ from tcod.console import Console
 from tcod.map import compute_fov
 
 from input_handlers import MainGameEventHandler
-from game_map import GameMap
+from message_log import MessageLog
 from render_functions import render_bar
 
 if TYPE_CHECKING:
@@ -23,6 +23,7 @@ class Engine:
         player: Actor
     ):
         self.event_handler: EventHandler = MainGameEventHandler(self)
+        self.message_log = MessageLog(5)
         self.player = player
 
     def handle_enemy_turns(self) -> None:
@@ -43,6 +44,8 @@ class Engine:
     def render(self, console: Console, context: Context) -> None:
         # render the map to the console
         self.game_map.render(console)
+
+        self.message_log.render(console, 21, 45, 40, 5)
 
         render_bar(console, (1, 45), self.player.fighter.hp, self.player.fighter.max_hp, 20)
 

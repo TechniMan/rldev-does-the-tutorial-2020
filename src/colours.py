@@ -1,7 +1,7 @@
 from typing import Tuple
 
 
-# colours from PICO-8 palette: https://pico-8.fandom.com/wiki/Palette
+# colours from PICO-8 palette: https://lospec.com/palette-list/pico-8
 # because they're a nice set of colours
 
 BLACK = (0, 0, 0)
@@ -22,6 +22,7 @@ PINK = (255, 119, 168)
 PEACH = (255, 204, 170)
 
 # ui elements
+WELCOME_TEXT = BLUE
 BAR_TEXT = WHITE
 BAR_FILLED = GREEN
 BAR_EMPTY = RED

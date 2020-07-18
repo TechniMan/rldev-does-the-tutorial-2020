@@ -14,7 +14,7 @@ def main() -> None:
     screen_width = 80
     screen_height = 50
     map_width = 80
-    map_height = 45
+    map_height = 43
     room_min_size = 5
     room_max_size = 10
     max_rooms = 30
@@ -26,7 +26,7 @@ def main() -> None:
     engine = Engine(
         player=player
     )
-    # in future, have a data type to hold all these
+    # in future, have a data type to hold all these params
     #  for ease of generating different dungeons
     engine.game_map = generate_dungeon(
         max_rooms,
@@ -38,6 +38,12 @@ def main() -> None:
         engine
     )
     engine.update_fov()
+
+    engine.message_log.add_message(
+        "Hello and welcome, adventurer, to yet another dungeon!",
+        colours.WELCOME_TEXT,
+        stack=False
+    )
 
     # load the tileset
     tileset = tcod.tileset.load_tilesheet(
