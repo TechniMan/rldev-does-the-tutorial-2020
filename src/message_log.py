@@ -20,9 +20,8 @@ class Message:
 
 
 class MessageLog:
-    def __init__(self, message_limit: int = 10):
+    def __init__(self):
         self.messages: List[Message] = []
-        self.message_limit = message_limit
 
     def add_message(self, text: str, fg: Tuple[int, int, int] = colours.WHITE,
     *, stack: bool = True) -> None:
@@ -33,9 +32,6 @@ class MessageLog:
             self.messages[-1].count += 1
         else:
             self.messages.append(Message(text, fg))
-            # if we reach the cap, then discard the oldest message
-            if len(self.messages) > self.message_limit:
-                self.messages.remove(self.messages[0])
 
     def render(self, console: tcod.Console, x: int, y: int, width: int, height: int) -> None:
         """ Render the message log at the given location """
