@@ -59,18 +59,25 @@ def tunnel_between(start: Tuple[int, int], end: Tuple[int, int]) -> Iterator[Tup
         yield x, y
 
 
+def choose_random_point_in_room(
+    room: RectangularRoom
+) -> Tuple[int, int]:
+    return (random.randint(room.x1 + 1, room.x2 - 1), random.randint(room.y1 + 1, room.y2 - 1))
+
+
 def place_entities(
     room: RectangularRoom,
     dungeon: GameMap,
-    enemy_limits: Tuple[int, int]
+    enemies_per_room: Tuple[int, int],
+    items_per_room: Tuple[int, int]
 ) -> None:
     # choose a random number of enemies to place in the room
-    number_of_enemies = random.randint(enemy_limits[0], enemy_limits[1])
+    number_of_enemies = random.randint(enemies_per_room[0], enemies_per_room[1])
+    number_of_items = random.randint(items_per_room[0], items_per_room[1])
 
     for i in range(number_of_enemies):
         # find a random spot to place them in
-        x = random.randint(room.x1 + 1, room.x2 - 1)
-        y = random.randint(room.y1 + 1, room.y2 - 1)
+        x, y = choose_random_point_in_room(room)
 
         # if there isn't another entity there:
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
@@ -80,6 +87,12 @@ def place_entities(
             else:
                 entity_factories.troll.spawn(dungeon, x, y)
 
+    for i in range(number_of_items):
+        x, y = choose_random_point_in_room(room)
+
+        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+            entity_factories.health_potion.spawn(dungeon, x, y)
+
 
 def generate_dungeon(
     max_rooms: int,
@@ -88,6 +101,7 @@ def generate_dungeon(
     map_width: int,
     map_height: int,
     enemies_per_room: Tuple[int, int],
+    items_per_room: Tuple[int, int],
     engine: Engine
 ) -> GameMap:
     """ Generate a new dungeon map """
@@ -119,7 +133,7 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].centre, new_room.centre):
                 dungeon.tiles[x, y] = tile_types.floor
             # try to add some enemies to this room
-            place_entities(new_room, dungeon, enemies_per_room)
+            place_entities(new_room, dungeon, enemies_per_room, items_per_room)
 
         # save this room to the list ready for the next room
         rooms.append(new_room)

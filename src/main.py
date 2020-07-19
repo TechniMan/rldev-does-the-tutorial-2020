@@ -19,7 +19,8 @@ def main() -> None:
     room_min_size = 5
     room_max_size = 10
     max_rooms = 30
-    enemies_per_room = (0, 2)
+    enemies_per_room = (0, 3)
+    items_per_room = (0, 2)
     # player vars
     player = copy.deepcopy(entity_factories.player)
 
@@ -36,6 +37,7 @@ def main() -> None:
         map_width,
         map_height,
         enemies_per_room,
+        items_per_room,
         engine
     )
     engine.update_fov()
