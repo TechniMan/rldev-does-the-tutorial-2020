@@ -30,7 +30,10 @@ class GameMap:
             (width, height), False, order="F"
         )
 
-    # return all living actors in this map
+    @property
+    def gamemap(self) -> GameMap:
+        return self
+
     @property
     def actors(self) -> Iterator[Actor]:
         """ Iterate over this map's living actors """
