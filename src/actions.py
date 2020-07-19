@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Optional, Tuple, TYPE_CHECKING
 
 import colours
+import exceptions
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -16,7 +17,7 @@ class Action:
     @property
     def engine(self) -> Engine:
         """ Return the engine this action belongs to """
-        return self.entity.game_map.engine
+        return self.entity.gamemap.engine
 
     @property
     def target_actor(self) -> Optional[Actor]:
@@ -63,30 +64,12 @@ class WaitAction(Action):
         pass
 
 
-class MovementAction(ActionWithDirection):
-    def perform(self) -> None:
-        dest_x, dest_y = self.dest_xy
-
-        # if entity is trying to move out of bounds, don't move
-        if not self.engine.game_map.in_bounds(dest_x, dest_y):
-            return
-        # if entity is trying to walk into an unwalkable tile (e.g. a wall), don't move
-        if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
-            return
-        # if entity is trying to walk into a movement-blocking entity, don't move
-        if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
-            return
-
-        # finally, move the entity
-        self.entity.move(self.dx, self.dy)
-
-
 class MeléeAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.target_actor
         # if there isn't an actor there, then quit early
         if not target:
-            return
+            raise exceptions.Impossible("Nothing to attack.")
 
         damage = self.entity.fighter.power - target.fighter.defense
         attack_description = f"{self.entity.name.capitalize()} attacks {target.name}"
@@ -106,6 +89,24 @@ class MeléeAction(ActionWithDirection):
                 f"{attack_description}, but does no damage.",
                 attack_colour
             )
+
+
+class MovementAction(ActionWithDirection):
+    def perform(self) -> None:
+        dest_x, dest_y = self.dest_xy
+
+        # if entity is trying to move out of bounds, don't move
+        if not self.engine.game_map.in_bounds(dest_x, dest_y):
+            raise exceptions.Impossible("The way is shut.")
+        # if entity is trying to walk into an unwalkable tile (e.g. a wall), don't move
+        if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
+            raise exceptions.Impossible("The way is shut.")
+        # if entity is trying to walk into a movement-blocking entity, don't move
+        if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
+            raise exceptions.Impossible("The way is shut.")
+
+        # finally, move the entity
+        self.entity.move(self.dx, self.dy)
 
 
 # Attempts to move into a space, otherwise deals with whatever's in the way

@@ -3,7 +3,6 @@ from typing import Tuple
 
 # colours from PICO-8 palette: https://lospec.com/palette-list/pico-8
 # because they're a nice set of colours
-
 BLACK = (0, 0, 0)
 DARK_BLUE = (29, 43, 83)
 DARK_PURPLE = (126, 37, 83)
@@ -27,8 +26,13 @@ ENEMY_ATTACK = ORANGE
 PLAYER_DIE = RED
 ENEMY_DIE = YELLOW
 
+INVALID = YELLOW
+IMPOSSIBLE = DARK_GREY
+ERROR = RED
+
 # ui elements
 WELCOME_TEXT = BLUE
+HEALTH_RECOVERED = GREEN
 BAR_TEXT = WHITE
 BAR_FILLED = GREEN
 BAR_EMPTY = RED

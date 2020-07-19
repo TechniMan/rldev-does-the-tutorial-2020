@@ -39,6 +39,28 @@ class Fighter(BaseComponent):
         if self._hp == 0 and self.parent.ai:
             self.die()
 
+    def heal(self, amount: int) -> int:
+        """ Adds `amount` to hp, and returns the amount healed """
+        if self.hp == self.max_hp:
+            return 0
+
+        # don't overheal :)
+        new_hp_value = self.hp + amount
+        if new_hp_value > self.max_hp:
+            new_hp_value = self.max_hp
+
+        # figure out the difference before we change it
+        amount_recovered = new_hp_value - self.hp
+        self.hp = new_hp_value
+        return amount_recovered
+
+    def take_true_damage(self, amount: int) -> None:
+        self.hp -= amount
+
+    def take_physical_damage(self, amount: int) -> None:
+        if amount > self.defense:
+            self.hp -= (amount - self.defense)
+
     def die(self) -> None:
         # if we are the player
         if self.engine.player is self.parent:

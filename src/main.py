@@ -2,6 +2,7 @@
 import copy
 import random
 import tcod
+import traceback
 
 import colours
 from engine import Engine
@@ -77,7 +78,13 @@ def main() -> None:
         # game loop
         while True:
             # handle input from player
-            engine.event_handler.handle_events(context)
+            try:
+                for event in tcod.event.wait():
+                    context.convert_event(event)
+                    engine.event_handler.handle_events(event)
+            except Exception:
+                traceback.print_exc()
+                engine.message_log.add_message(traceback.format_exc(), colours.ERROR)
 
             # print everything to screen
             root_console.clear()

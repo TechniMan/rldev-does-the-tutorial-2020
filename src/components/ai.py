@@ -20,12 +20,12 @@ class BaseAI(Action):
         If there is no valid path, returns an empty list.
         """
         # copy the walkable tiles
-        cost = numpy.array(self.entity.game_map.tiles["walkable"], dtype=numpy.int8)
+        cost = numpy.array(self.entity.gamemap.tiles["walkable"], dtype=numpy.int8)
 
         # for each entity in the map
         #  if it is blocking movement
         #   add to the cost of that tile for pathfinding
-        for entity in self.entity.game_map.entities:
+        for entity in self.entity.gamemap.entities:
             if entity.blocks_movement and cost[entity.x, entity.y]:
                 cost[entity.x, entity.y] += 10
 
