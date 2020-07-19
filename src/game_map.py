@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING
+from typing import Iterable, Iterator, List, Optional, TYPE_CHECKING
 import numpy # type: ignore
 from tcod.console import Console
 
-from entity import Actor
+from entity import Actor, Item
 import tile_types
 
 if TYPE_CHECKING:
@@ -30,23 +30,45 @@ class GameMap:
             (width, height), False, order="F"
         )
 
+    def in_bounds(self, x: int, y: int) -> bool:
+        """ Returns True if x and y are inside of the bounds of this map """
+        return 0 <= x < self.width and 0 <= y < self.height
+
     @property
     def gamemap(self) -> GameMap:
         return self
 
     @property
     def actors(self) -> Iterator[Actor]:
-        """ Iterate over this map's living actors """
+        """ Iterate over the living actors in the map """
         yield from (
             entity
             for entity in self.entities
             if isinstance(entity, Actor) and entity.is_alive
         )
 
-    def in_bounds(self, x: int, y: int) -> bool:
-        """ Returns True if x and y are inside of the bounds of this map """
-        return 0 <= x < self.width and 0 <= y < self.height
-    
+    def get_actor_at_location(self, x: int, y: int) -> Optional[Actor]:
+        for actor in self.actors:
+            if actor.x == x and actor.y == y:
+                # we've found the actor at this space; are they alive?
+                if actor.is_alive:
+                    return actor
+                return None
+        return None
+
+    @property
+    def items(self) -> Iterator[Item]:
+        """ Iterate over the items in the map """
+        yield from (entity for entity in self.entities if isinstance(entity, Item))
+
+    def get_items_at_location(self, x: int, y: int) -> List[Item]:
+        """ Returns a list of all items the exist at the given location """
+        results: List[Item] = []
+        for item in self.items:
+            if item.x == x and item.y == y:
+                results.append(item)
+        return results
+
     def get_blocking_entity_at_location(self,
             location_x: int,
             location_y: int
@@ -56,15 +78,6 @@ class GameMap:
             if entity.blocks_movement and entity.x == location_x and entity.y == location_y:
                 return entity
         # if none found, return None
-        return None
-
-    def get_actor_at_location(self, x: int, y: int) -> Optional[Actor]:
-        for actor in self.actors:
-            if actor.x == x and actor.y == y:
-                # we've found the actor at this space; are they alive?
-                if actor.is_alive:
-                    return actor
-                return None
         return None
 
     def render(self, console: Console) -> None:

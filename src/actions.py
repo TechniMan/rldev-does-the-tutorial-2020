@@ -54,9 +54,9 @@ class ActionWithDirection(Action):
         raise NotImplementedError()
 
 
-class EscapeAction(Action):
+class DropItemAction(Action):
     def perform(self) -> None:
-        raise SystemExit()
+        self.entity.inventory.drop(self.item)
 
 
 class ItemAction(Action):
@@ -77,6 +77,32 @@ class ItemAction(Action):
     def perform(self) -> None:
         """ Invoke the item's ability """
         self.item.consumable.activate(self)
+
+
+class PickupAction(Action):
+    """ Picks up the first item on the floor beneath the actor """
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
+
+    def perform(self) -> None:
+        actor_location_x = self.entity.x
+        actor_location_y = self.entity.y
+        inventory = self.entity.inventory
+
+        for item in self.engine.game_map.items:
+            # find the item which is in the same location as the actor
+            if item.x == actor_location_x and item.y == actor_location_y:
+                if inventory.is_full:
+                    raise exceptions.Impossible(f"Your inventory is too full to pick up the {item.name}!")
+
+                self.engine.game_map.entities.remove(item)
+                item.parent = self.entity.inventory
+                inventory.add(item)
+
+                self.engine.message_log.add_message(f"You picked up the {item.name}.")
+                return
+
+        raise exceptions.Impossible("There is nothing here to pick up.")
 
 
 class WaitAction(Action):
