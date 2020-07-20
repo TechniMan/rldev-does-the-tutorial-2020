@@ -73,7 +73,7 @@ class Fighter(BaseComponent):
 
         self.parent.render_order = RenderOrder.CORPSE
         self.parent.char = "%"
-        self.parent.colour = colours.RED
+        self.parent.colour = colours.DEAD
         self.parent.blocks_movement = False
         self.parent.ai = None
         self.parent.name = f"remains of {self.parent.name}"
