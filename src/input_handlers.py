@@ -7,6 +7,7 @@ from actions import (
     Action,
     BumpAction,
     DropItemAction,
+    EscapeAction,
     PickupAction,
     WaitAction
 )

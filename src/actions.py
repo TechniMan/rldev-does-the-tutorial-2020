@@ -59,6 +59,11 @@ class DropItemAction(Action):
         self.entity.inventory.drop(self.item)
 
 
+class EscapeAction(Action):
+    def perform(self) -> None:
+        raise SystemExit()
+
+
 class ItemAction(Action):
     def __init__(self,
             entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None):
