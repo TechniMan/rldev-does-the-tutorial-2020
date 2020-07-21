@@ -1,6 +1,6 @@
 import colours
 from components.ai import BaseAI, HostileEnemy
-from components.consumable import HealingConsumable
+from components import consumable
 from components.fighter import Fighter
 from components.inventory import Inventory
 from entity import Actor, Item
@@ -23,9 +23,15 @@ player = Actor(
 # items
 health_potion = Item(
     char="!",
-    colour=colours.HEALTH_RECOVERED,
+    colour=colours.HEALTH_POTION,
     name="Health Potion",
-    consumable=HealingConsumable(10)
+    consumable=consumable.HealingConsumable(4)
+)
+lightning_scroll = Item(
+    char="~",
+    colour=colours.LIGHTNING_SCROLL,
+    name="Lightning Scroll",
+    consumable=consumable.LightningDamageConsumable(20, 5)
 )
 
 # enemies
