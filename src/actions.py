@@ -55,6 +55,10 @@ class ActionWithDirection(Action):
 
 
 class DropItemAction(Action):
+    def __init__(self, entity: Actor, item: Item):
+        super().__init__(entity)
+        self.item = item
+
     def perform(self) -> None:
         self.entity.inventory.drop(self.item)
 

@@ -41,4 +41,4 @@ def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
 def render_names_at_mouse_position(console: Console, x: int, y: int, engine: Engine) -> None:
     mouse_x, mouse_y = engine.mouse_position
     names = get_names_at_location(mouse_x, mouse_y, engine.game_map)
-    console.print(x, y, names, colours.BAR_TEXT)
+    console.print(x, y, names, colours.GENERAL_TEXT)

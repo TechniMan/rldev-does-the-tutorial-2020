@@ -23,7 +23,7 @@ class MessageLog:
     def __init__(self):
         self.messages: List[Message] = []
 
-    def add_message(self, text: str, fg: Tuple[int, int, int] = colours.WHITE,
+    def add_message(self, text: str, fg: Tuple[int, int, int] = colours.DEFAULT,
     *, stack: bool = True) -> None:
         """ Add a message to this log.
         If `stack` is True, then the message can stack with a previous message of the same text.

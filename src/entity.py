@@ -82,7 +82,7 @@ class Actor(Entity):
         x: int = 0,
         y: int = 0,
         char: str = "?",
-        colour: Tuple[int, int, int] = colours.WHITE,
+        colour: Tuple[int, int, int] = colours.DEFAULT,
         name: str = "<Unnamed>",
         ai_cls: Type[BaseAI],
         fighter: Fighter,
@@ -110,7 +110,7 @@ class Actor(Entity):
 
 class Item(Entity):
     def __init__(self, *,
-            x: int = 0, y: int = 0, char: str = "?", colour = colours.WHITE,
+            x: int = 0, y: int = 0, char: str = "?", colour = colours.DEFAULT,
             name: str = "<Unnamed>", consumable: Consumable):
         super().__init__(name, char, colour, x, y, False, render_order = RenderOrder.ITEM)
 

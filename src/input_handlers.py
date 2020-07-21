@@ -231,7 +231,7 @@ class InventoryEventHandler(AskUserEventHandler):
         width = len(self.TITLE) + 4
 
         console.draw_frame(x = x, y = y, width = width, height = height, title = self.TITLE,
-                clear = True, fg = colours.WHITE, bg = colours.BLACK
+                clear = True, fg = colours.FRAME, bg = colours.BACKGROUND
         )
 
         if count_of_items > 0:
