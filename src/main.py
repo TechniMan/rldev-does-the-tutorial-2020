@@ -7,6 +7,7 @@ import traceback
 import colours
 from engine import Engine
 import entity_factories
+from exceptions import Impossible
 from procgen import generate_dungeon
 
 
@@ -84,6 +85,8 @@ def main() -> None:
                 for event in tcod.event.wait():
                     context.convert_event(event)
                     engine.event_handler.handle_events(event)
+            except Impossible as exc:
+                engine.message_log.add_message(exc.args[0], colours.IMPOSSIBLE)
             except Exception:
                 traceback.print_exc()
                 engine.message_log.add_message(traceback.format_exc(), colours.ERROR)

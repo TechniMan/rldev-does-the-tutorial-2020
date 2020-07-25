@@ -103,7 +103,13 @@ class MainGameEventHandler(EventHandler):
         elif key == tcod.event.K_v:
             self.engine.event_handler = HistoryViewer(self.engine)
         elif key == tcod.event.K_g:
-            action = PickupAction(player)
+            items = self.engine.game_map.get_items_at_location(player.x, player.y)
+            if len(items) == 0:
+                raise exceptions.Impossible("There is nothing here to pick up.")
+            elif len(items) == 1:
+                action = PickupAction(player, items[0])
+            else:
+                self.engine.event_handler = ItemPickupHandler(self.engine)
         elif key == tcod.event.K_i:
             self.engine.event_handler = InventoryUseHandler(self.engine)
         elif key == tcod.event.K_d:
@@ -275,3 +281,57 @@ class InventoryDropHandler(InventoryEventHandler):
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """ Drop the selected item """
         return DropItemAction(self.engine.player, item)
+
+
+class ItemPickupHandler(AskUserEventHandler):
+    """ Handles selecting from multiple items to pick up """
+    TITLE = "Select an item to pick up"
+
+    def on_render(self, console: tcod.Console) -> None:
+        """
+        Render an inventory menu, displaying all items underneath the player.
+        Displays in a different position so the player character is always visible.
+        """
+        super().on_render(console)
+        player_x, player_y = self.engine.player.x, self.engine.player.y
+        items = self.engine.game_map.get_items_at_location(player_x, player_y)
+        height = len(items) + 2
+        if height <= 3:
+            height = 3
+
+        if self.engine.player.x <= 30:
+            x = 40
+        else:
+            x = 0
+        y = 0
+
+        width = len(self.TITLE) + 4
+
+        console.draw_frame(x = x, y = y, width = width, height = height, title = self.TITLE,
+                clear = True, fg = colours.FRAME, bg = colours.BACKGROUND
+        )
+
+        if len(items) > 0:
+            for idx, item in enumerate(items):
+                key = chr(ord("a") + idx)
+                console.print(x + 1, y + idx + 1, f"({key}) {item.name}")
+        else:
+            console.print(x + 1, y + 1, "(Empty)")
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+        player = self.engine.player
+        key = event.sym
+        index = key - tcod.event.K_a
+        items = player.gamemap.get_items_at_location(player.x, player.y)
+
+        if 0 <= index <= 26:
+            try:
+                selected_item = items[index]
+            except IndexError:
+                self.engine.message_log.add_message("Invalid entry.", colours.INVALID)
+                return None
+            return self.on_item_selected(selected_item)
+        return super().ev_keydown(event)
+
+    def on_item_selected(self, item: Item) -> Optional[Action]:
+        return PickupAction(self.engine.player, item)

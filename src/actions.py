@@ -90,28 +90,24 @@ class ItemAction(Action):
 
 class PickupAction(Action):
     """ Picks up the first item on the floor beneath the actor """
-    def __init__(self, entity: Actor):
+    def __init__(self, entity: Actor, item: Item):
         super().__init__(entity)
+        self.item = item
 
     def perform(self) -> None:
         actor_location_x = self.entity.x
         actor_location_y = self.entity.y
         inventory = self.entity.inventory
 
-        for item in self.engine.game_map.items:
-            # find the item which is in the same location as the actor
-            if item.x == actor_location_x and item.y == actor_location_y:
-                if inventory.is_full:
-                    raise exceptions.Impossible(f"Your inventory is too full to pick up the {item.name}!")
+        if inventory.is_full:
+            raise exceptions.Impossible(f"Your inventory is too full to pick up the {item.name}!")
 
-                self.engine.game_map.entities.remove(item)
-                item.parent = self.entity.inventory
-                inventory.add(item)
+        self.engine.game_map.entities.remove(self.item)
+        self.item.parent = self.entity.inventory
+        inventory.add(self.item)
 
-                self.engine.message_log.add_message(f"You picked up the {item.name}.")
-                return
-
-        raise exceptions.Impossible("There is nothing here to pick up.")
+        self.engine.message_log.add_message(f"You picked up the {self.item.name}.")
+        return
 
 
 class WaitAction(Action):
