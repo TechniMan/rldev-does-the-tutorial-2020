@@ -4,15 +4,15 @@ from typing import Optional, TYPE_CHECKING
 
 import actions
 import colours
-from components.base_component import BaseComponent
-from components.inventory import Inventory
+import components
 import exceptions
+from input_handlers import SingleRangedAttackHandler
 
 if TYPE_CHECKING:
     from entity import Actor, Item
 
 
-class Consumable(BaseComponent):
+class Consumable(components.base_component.BaseComponent):
     parent: Item
 
     def get_action(self, consumer: Actor) -> Optional[actions.Action]:
@@ -30,7 +30,7 @@ class Consumable(BaseComponent):
         """ Removes the consumed item from its containing inventory """
         item = self.parent
         inventory = item.parent
-        if isinstance(inventory, Inventory):
+        if isinstance(inventory, components.inventory.Inventory):
             inventory.items.remove(item)
 
 
@@ -77,4 +77,36 @@ class LightningDamageConsumable(Consumable):
             target.fighter.take_true_damage(self.damage)
             self.consume()
         else:
-            raise Impossible("No enemies within range.")
+            raise exceptions.Impossible("No enemies within range.")
+
+
+class ConfusionConsumable(Consumable):
+    def __init__(self, number_of_turns: int):
+        self.number_of_turns = number_of_turns
+
+    def get_action(self, consumer: Actor) -> Optional[actions.Action]:
+        self.engine.message_log.add_message("Select a target location", colours.NEEDS_TARGET)
+        self.engine.event_handler = SingleRangedAttackHandler(self.engine,
+            callback = lambda xy: actions.ItemAction(consumer, self.parent, xy)
+        )
+        return None
+
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        target = action.target_actor
+
+        if not self.engine.game_map.visible[action.target_xy]:
+            raise exceptions.Impossible("You cannot target an area that you cannot see!")
+        if not target:
+            raise exceptions.Impossible("You must select an enemy to target!")
+        if target is consumer:
+            raise exceptions.Impossible("You cannot cast this upon yourself!")
+
+        self.engine.message_log.add_message(
+            f"The eyes of the {target.name} look vacant, as it starts to stumble around.",
+            colours.STATUS_EFFECT_APPLIED
+        )
+        target.ai = components.ai.ConfusedEnemy(
+            target, target.ai, self.number_of_turns
+        )
+        self.consume()

@@ -33,6 +33,12 @@ lightning_scroll = Item(
     name="Lightning Scroll",
     consumable=consumable.LightningDamageConsumable(20, 5)
 )
+confusion_scroll = Item(
+    char="~",
+    colour=colours.CONFUSION_SCROLL,
+    name="Confusion Scroll",
+    consumable=consumable.ConfusionConsumable(10)
+)
 
 # enemies
 orc = Actor(

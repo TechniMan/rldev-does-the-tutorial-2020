@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import List, Tuple, TYPE_CHECKING
 import numpy
+import random
 import tcod
+from typing import List, Optional, Tuple, TYPE_CHECKING
 
-from actions import Action, MeléeAction, MovementAction, WaitAction
+from actions import Action, BumpAction, MeléeAction, MovementAction, WaitAction
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -41,6 +42,32 @@ class BaseAI(Action):
 
         # convert from List[List[int]] to List[Tuple[int, int]]
         return [(index[0], index[1]) for index in path]
+
+
+class ConfusedEnemy(BaseAI):
+    """ A confused enemy will stumble around for a specified time then return to its previous behaviour.
+    If an actor occupies the tile it is randomly moving into, it will attack them. """
+    def __init__(self,
+        entity: Actor, previous_ai: Optional[BaseAI], turns: int
+    ):
+        super().__init__(entity)
+        self.previous_ai = previous_ai
+        self.turns_remaining = turns
+
+    def perform(self) -> None:
+        # when the timer runs out, reset the behaviour
+        if self.turns_remaining <= 0:
+            self.engine.message_log.add_message(f"The {self.entity.name} is no longer confused.")
+            self.entity.ai = self.previous_ai
+        else:
+            # otherwise, pick a random direction and move or attack whatever's there
+            x, y = random.choice([
+                (-1, -1), (-1, 0), (-1, 1),
+                (0, -1), (0, 0), (0, 1),
+                (1, -1), (1, 0), (1, 1)
+            ])
+            self.turns_remaining -= 1
+            return BumpAction(self.entity, x, y)
 
 
 class HostileEnemy(BaseAI):
