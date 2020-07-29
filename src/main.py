@@ -47,12 +47,12 @@ def main() -> None:
     tilesets_available = [
         ("Cheepicus-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
         # ("dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD),
-        ("Guybrush-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
-        ("Kelora-16x16-diagonal.png", 16, 16, tcod.tileset.CHARMAP_CP437),
-        ("Moons-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
-        ("Msgothic.png", 16, 16, tcod.tileset.CHARMAP_CP437),
-        ("Tahin-16x16-rounded.png", 16, 16, tcod.tileset.CHARMAP_CP437),
-        #("Tigrex3d.png", 16, 16, tcod.tileset.CHARMAP_CP437)
+        # ("Guybrush-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        # ("Kelora-16x16-diagonal.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        # ("Moons-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        # ("Msgothic.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        # ("Tahin-16x16-rounded.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        # ("Tigrex3d.png", 16, 16, tcod.tileset.CHARMAP_CP437)
     ]
     chosen_tileset = random.choice(tilesets_available)
     # load the tileset

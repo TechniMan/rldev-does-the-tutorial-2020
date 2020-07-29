@@ -95,12 +95,10 @@ class PickupAction(Action):
         self.item = item
 
     def perform(self) -> None:
-        actor_location_x = self.entity.x
-        actor_location_y = self.entity.y
         inventory = self.entity.inventory
 
         if inventory.is_full:
-            raise exceptions.Impossible(f"Your inventory is too full to pick up the {item.name}!")
+            raise exceptions.Impossible(f"Your inventory is too full to pick up the {self.item.name}!")
 
         self.engine.game_map.entities.remove(self.item)
         self.item.parent = self.entity.inventory

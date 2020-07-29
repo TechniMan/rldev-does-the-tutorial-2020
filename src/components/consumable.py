@@ -4,7 +4,7 @@ from typing import Optional, TYPE_CHECKING
 
 import actions
 import colours
-import components
+import components.base_component
 import exceptions
 from input_handlers import SingleRangedAttackHandler
 

@@ -63,11 +63,11 @@ class ConfusedEnemy(BaseAI):
             # otherwise, pick a random direction and move or attack whatever's there
             x, y = random.choice([
                 (-1, -1), (-1, 0), (-1, 1),
-                (0, -1), (0, 0), (0, 1),
+                (0, -1), (0, 1),
                 (1, -1), (1, 0), (1, 1)
             ])
             self.turns_remaining -= 1
-            return BumpAction(self.entity, x, y)
+            return BumpAction(self.entity, x, y).perform()
 
 
 class HostileEnemy(BaseAI):
