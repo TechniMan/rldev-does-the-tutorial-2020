@@ -39,6 +39,12 @@ confusion_scroll = Item(
     name="Confusion Scroll",
     consumable=consumable.ConfusionConsumable(10)
 )
+fireball_scroll = Item(
+    char="~",
+    colour=colours.FIREBALL_SCROLL,
+    name="Fireball Scroll",
+    consumable=consumable.FireballConsumable(12, 3)
+)
 
 # enemies
 orc = Actor(

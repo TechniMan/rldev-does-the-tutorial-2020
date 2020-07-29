@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import tcod
+import tcod.console
 import tcod.event
 from typing import Callable, Optional, Tuple, TYPE_CHECKING
 
@@ -409,6 +411,36 @@ class SingleRangedAttackHandler(SelectIndexHandler):
     ):
         super().__init__(engine)
         self.callback = callback
+
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback((x, y))
+
+
+class AreaRangedAttackHandler(SelectIndexHandler):
+    """ Handles targeting an area within a given radius. Any entity within the area will be affected. """
+    def __init__(self,
+        engine: Engine,
+        radius: int,
+        callback: Callable[[Tuple[int, int]], Optional[Action]]
+    ):
+        super().__init__(engine)
+        self.radius = radius
+        self.callback = callback
+
+    def on_render(self, console: tcod.Console) -> None:
+        # highlights the tile under the cursor
+        super().on_render(console)
+
+        # draw a rectangle around the targeted area
+        x, y = self.engine.mouse_location
+        console.draw_frame(
+            x - self.radius - 1,
+            y - self.radius - 1,
+            self.radius ** 2,
+            self.radius ** 2,
+            fg=colours.RLT.RED,
+            clear=False
+        )
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
