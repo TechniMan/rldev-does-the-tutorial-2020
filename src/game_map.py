@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 
 
 class GameMap:
+    render_width = 80
+    render_height = 43
+
     def __init__(self,
             engine: Engine,
             width: int,
@@ -22,12 +25,14 @@ class GameMap:
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
-        self.tiles = numpy.full((width, height), fill_value=tile_types.wall, order="F")
+        self.tiles = numpy.full(
+            (width, height), fill_value=tile_types.wall, order="F"
+        )
         self.visible = numpy.full(
             (width, height), fill_value=False, order="F"
         )
         self.explored = numpy.full(
-            (width, height), False, order="F"
+            (width, height), fill_value=False, order="F"
         )
 
     def in_bounds(self, x: int, y: int) -> bool:
@@ -80,24 +85,32 @@ class GameMap:
         # if none found, return None
         return None
 
-    def render(self, console: Console) -> None:
+    def render(self, console: Console, offset_x: int, offset_y: int) -> None:
         """
         Renders the map.
         Visible tiles are drawn with their "lit" colour.
         Explored tiles are drawn with their "unlit" colour.
         Other tiles are drawn as FOG.
         """
-        # pass the map tile colours to the console
-        console.tiles_rgb[0:self.width, 0:self.height] = numpy.select(
-            [self.visible, self.explored],
-            [self.tiles["lit"], self.tiles["unlit"]],
-            tile_types.FOG
-        )
+        # draw each map tile within the screen
+        for map_x in range(self.width):
+            for map_y in range(self.height):
+                x = map_x + offset_x
+                y = map_y + offset_y
+                if x >= 0 and x < self.render_width and y >= 0 and y < self.render_height:
+                    if self.visible[map_x, map_y]:
+                        console.tiles_rgb[x, y] = self.tiles["lit"][map_x, map_y]
+                    elif self.explored[map_x, map_y]:
+                        console.tiles_rgb[x, y] = self.tiles["unlit"][map_x, map_y]
+                    else:
+                        console.tiles_rgb[x, y] = tile_types.FOG
 
-        entities_sorted_for_rendering = sorted(self.entities, key=lambda x: x.render_order.value)
+        entities_sorted_for_rendering = sorted(self.entities, key=lambda e: e.render_order.value)
 
         # render entities to the console, on top of the map
         for entity in entities_sorted_for_rendering:
-            # only print visible entities
-            if self.visible[entity.x, entity.y]:
-                console.print(entity.x, entity.y, entity.char, fg=entity.colour)
+            x = entity.x + offset_x
+            y = entity.y + offset_y
+            # only print visible entities (by player character and viewport)
+            if self.visible[entity.x, entity.y] and x >= 0 and x < self.render_width and y >= 0 and y < self.render_height:
+                console.print(x, y, entity.char, fg=entity.colour)

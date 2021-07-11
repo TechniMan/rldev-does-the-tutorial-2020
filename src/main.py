@@ -15,11 +15,11 @@ def main() -> None:
     # general vars
     screen_width = 80
     screen_height = 50
-    map_width = 80
-    map_height = 43
+    map_width = 160 # map render width: 80
+    map_height = 86 # map render height: 43
     room_min_size = 5
-    room_max_size = 10
-    max_rooms = 30
+    room_max_size = 15
+    max_rooms = 50
     enemies_per_room = (0, 3)
     items_per_room = (0, 2)
     # player vars
@@ -45,8 +45,8 @@ def main() -> None:
 
     # choose a random tileset until I can decide which I prefer
     tilesets_available = [
-        ("Cheepicus-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
-        # ("dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD),
+        # ("Cheepicus-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
+        ("dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD),
         # ("Guybrush-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),
         # ("Kelora-16x16-diagonal.png", 16, 16, tcod.tileset.CHARMAP_CP437),
         # ("Moons-square-16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437),

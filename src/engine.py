@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
 from tcod.console import Console
 from tcod.map import compute_fov
 
@@ -46,10 +46,19 @@ class Engine:
         self.game_map.explored |= self.game_map.visible
 
     def render(self, console: Console) -> None:
-        # render the map to the console
-        self.game_map.render(console)
+        # render the map to the console, offset to keep the player centred
+        cam_x, cam_y = self.offset_coordinates(0, 0)
+        self.game_map.render(console, cam_x, cam_y)
 
         self.message_log.render(console, 21, 45, 40, 5)
 
         render_bar(console, (1, 45), self.player.fighter.hp, self.player.fighter.max_hp, 20)
         render_names_at_mouse_position(console, 21, 44, self)
+
+    def offset_coordinates(self, x: int, y: int) -> Tuple[int, int]:
+        """ Offset the given co-ordinates for rendering
+            Offset puts player at the centre of the screen """
+        return (
+            int(self.game_map.render_width / 2) - self.player.x + x,
+            int(self.game_map.render_height / 2) - self.player.y + y
+        )

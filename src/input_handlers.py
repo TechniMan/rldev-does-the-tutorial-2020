@@ -351,12 +351,12 @@ class SelectIndexHandler(AskUserEventHandler):
         """ Initialises the cursor to the player position """
         super().__init__(engine)
         player = self.engine.player
-        engine.mouse_location = player.x, player.y
+        engine.mouse_position = player.x, player.y
 
     def on_render(self, console: tcod.Console) -> None:
         """ Highlight the tile under the mouse cursor """
         super().on_render(console)
-        x, y = self.engine.mouse_location
+        x, y = self.engine.offset_coordinates(*self.engine.mouse_position)
         console.tiles_rgb["bg"][x, y] = colours.HIGHLIGHT_BACKGROUND
         console.tiles_rgb["fg"][x, y] = colours.HIGHLIGHT_FOREGROUND
 
@@ -373,17 +373,17 @@ class SelectIndexHandler(AskUserEventHandler):
             if event.mod & (tcod.event.KMOD_LALT | tcod.event.KMOD_RALT):
                 cursor_speed *= 20
 
-            x, y = self.engine.mouse_location
+            x, y = self.engine.mouse_position
             dx, dy = MOVE_KEYS[key]
             x += dx * cursor_speed
             y += dy * cursor_speed
             # clamp the tracked position to the map size
-            x = max(0, min(x, self.engine.game_map.width - 1))
-            y = max(0, min(y, self.engine.game_map.height - 1))
-            self.engine.mouse_location = x, y
+            x = max(0, min(x, self.engine.game_map.render_width - 1))
+            y = max(0, min(y, self.engine.game_map.render_height - 1))
+            self.engine.mouse_position = x, y
             return None
         elif key in CONFIRM_KEYS:
-            return self.on_index_selected(*self.engine.mouse_location)
+            return self.on_index_selected(*self.engine.mouse_position)
         # else, pass key up to AskUserEH; which will probably cancel back to MainGameEH
         return super().ev_keydown(event)
 
@@ -432,7 +432,7 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         super().on_render(console)
 
         # draw a rectangle around the targeted area
-        x, y = self.engine.mouse_location
+        x, y = self.engine.offset_coordinates(*self.engine.mouse_position)
         console.draw_frame(
             x - self.radius - 1,
             y - self.radius - 1,
