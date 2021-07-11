@@ -40,7 +40,7 @@ def new_tile(
 
 
 # FOG: default, for unseen tiles
-FOG = numpy.array((ord(" "), colours.FOG, colours.BACKGROUND), dtype=graphic_dt)
+FOG = numpy.array((ord("#"), colours.FOG, colours.BACKGROUND), dtype=graphic_dt)
 
 floor = new_tile(
     walkable=True,
