@@ -103,6 +103,8 @@ class GameMap:
                     elif self.explored[map_x, map_y]:
                         console.tiles_rgb[x, y] = self.tiles["unlit"][map_x, map_y]
                     else:
+                        # Show hidden tiles for debug purposes; useful for testing map gen
+                        #console.tiles_rgb[x, y] = self.tiles["unlit"][map_x, map_y]
                         console.tiles_rgb[x, y] = tile_types.FOG
 
         entities_sorted_for_rendering = sorted(self.entities, key=lambda e: e.render_order.value)

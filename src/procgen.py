@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+import numpy
 from typing import Iterator, List, Tuple, TYPE_CHECKING
 import tcod
 
@@ -138,13 +139,52 @@ def generate_dungeon(
         # otherwise:
         else:
             # carve a tunnel to the previous room
-            for x, y in tunnel_between(rooms[-1].centre, new_room.centre):
-                dungeon.tiles[x, y] = tile_types.floor
+            #for x, y in tunnel_between(rooms[-1].centre, new_room.centre):
+                #dungeon.tiles[x, y] = tile_types.floor
             # try to add some enemies to this room
             place_entities(new_room, dungeon, enemies_per_room, items_per_room)
 
         # save this room to the list ready for the next room
         rooms.append(new_room)
     # end for r in range(max_rooms)
+
+    # add tunnels between the nearest rooms
+    for r1 in rooms:
+        # find the first nearest room
+        nearest_room = rooms[0]
+        for r2 in rooms:
+            if r2.centre == r1.centre:
+                continue
+            d1 = tuple(numpy.subtract(r2.centre, r1.centre))
+            d2 = tuple(numpy.subtract(nearest_room.centre, r1.centre))
+            if (pow(d1[0]**2 + d1[1]**2, 0.5)) < (pow(d2[0]**2 + d2[1]**2, 0.5)):
+                nearest_room = r2
+        for x, y in tunnel_between(nearest_room.centre, r1.centre):
+            dungeon.tiles[x, y] = tile_types.floor
+        r2 = nearest_room
+        # now find the second nearest room
+        nearest_room = rooms[0]
+        for r3 in rooms:
+            if r3.centre == r1.centre or r3.centre == r2.centre:
+                continue
+            d1 = tuple(numpy.subtract(r3.centre, r1.centre))
+            d2 = tuple(numpy.subtract(nearest_room.centre, r1.centre))
+            if (pow(d1[0]**2 + d1[1]**2, 0.5)) < (pow(d2[0]**2 + d2[1]**2, 0.5)):
+                nearest_room = r3
+        for x, y in tunnel_between(nearest_room.centre, r1.centre):
+            dungeon.tiles[x, y] = tile_types.floor
+        r3 = nearest_room
+        # finally, find the third nearest room sometimes
+        if random.random() > 0.5:
+            nearest_room = rooms[0]
+            for r4 in rooms:
+                if r4.centre == r1.centre or r4.centre == r2.centre or r4.centre == r3.centre:
+                    continue
+                d1 = tuple(numpy.subtract(r4.centre, r1.centre))
+                d2 = tuple(numpy.subtract(nearest_room.centre, r1.centre))
+                if (pow(d1[0]**2 + d1[1]**2, 0.5)) < (pow(d2[0]**2 + d2[1]**2, 0.5)):
+                    nearest_room = r4
+            for x, y in tunnel_between(nearest_room.centre, r1.centre):
+                dungeon.tiles[x, y] = tile_types.floor
 
     return dungeon
